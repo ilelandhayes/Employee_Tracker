@@ -31,12 +31,15 @@ const start = () => {
                 break;
         
             case "View all roles?":
+                viewAllRoles();
                 break;
         
             case "View all employees?":
+                viewAllEmployees();
                 break;
 
             case "Add a department?":
+                addDepartment();
                 break;
 
             case "Add a role?":
@@ -61,12 +64,48 @@ const viewAllDepartments = () => {
         } 
     )
 };
-
-const viewAllRoles = () => {}
-
-const viewAllEmployees = () => {}
-
-const addDepartment = () => {}
+// function to view all roles table
+const viewAllRoles = () => {
+    database.query("SELECT role.id, role.title, role.salary FROM role;",
+        function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            start();
+        } 
+    )
+}
+// function to view all employees table
+const viewAllEmployees = () => {
+    database.query("SELECT employee.id, employee.first_name, employee.last_name, department.name, role.title, role.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;",
+        function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            start();
+        } 
+    )
+}
+// function to add a department
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+        name: "name",
+        type: "input",
+        message: "Which department would you like to add?",
+        },
+    ])
+    .then(function (res){
+        database.query("INSERT INTO department SET ?",
+        {
+        name: res.name,
+        },
+        function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            start();
+        }
+        );
+    });
+}
 
 const addRole = () => {}
 
