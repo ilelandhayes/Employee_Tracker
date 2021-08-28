@@ -43,9 +43,11 @@ const start = () => {
                 break;
 
             case "Add a role?":
+                addRole();
                 break;
 
             case "Add a employee?":
+                addEmployee();
                 break;
 
             case "Update an employee role?":
@@ -106,7 +108,38 @@ const addDepartment = () => {
         );
     });
 }
-
-const addRole = () => {}
+// function to add a role
+const addRole = () => {
+    database.query("SELECT role.title AS title, role.salary AS salary FROM role;",
+        function (err, res) {
+          inquirer.prompt([
+              {
+                name: "title",
+                type: "input",
+                message: "What is the title of the new role?",
+              },
+              {
+                name: "salary",
+                type: "input",
+                message: "What is the salary for this role?",
+              },
+            ])
+            .then(function (res) {
+              database.query(
+                "INSERT INTO role SET ?",
+                {
+                  title: res.title,
+                  salary: res.salary,
+                },
+                function (err) {
+                  if (err) throw err;
+                  console.table(res);
+                  start();
+                }
+              );
+            });
+        }
+    );
+}
 
 const addEmployee = () => {}
