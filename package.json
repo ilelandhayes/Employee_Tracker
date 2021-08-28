@@ -1,5 +1,5 @@
 {
-  "name": "employee-tracker",
+  "name": "employee_tracker",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -13,6 +13,8 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "inquirer": "^8.1.2",
-    "mysql2": "^2.3.0"
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.0",
+    "node": "^16.6.1"
   }
 }
