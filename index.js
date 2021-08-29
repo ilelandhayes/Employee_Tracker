@@ -51,6 +51,7 @@ const start = () => {
                 break;
 
             case "Update an employee role?":
+                updateEmployee();
                 break;
         }
     })
@@ -211,4 +212,45 @@ const addEmployee = () => {
       });
 }
 // function to update an employee
-const updateEmployee = () => {}
+const updateEmployee = () => {
+    database.query("SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
+        if (err) throw (res);
+        console.log(res);
+        inquirer.prompt([
+            {
+                name: "lastName",
+                type: "list",
+                choices: function () {
+                    let lastName = [];
+                    for (let i = 0; i < res.length; i++) {
+                        lastName.push(res[i].last_name);
+                    }
+                    return lastName;
+                },
+                message: "What is the Employee's last name?",
+            },
+            {
+                name: "role",
+                type: "rawlist",
+                message: "What is the Employees new Role? ",
+                choices: selectRole(),
+              },
+        ])
+        .then(function (val) {
+            let roleId = selectRole().indexOf(val.role) + 1;
+            database.query("UPDATE employee SET ? WHERE ?",
+            [{
+                last_name: val.lastName,
+            },
+            {
+                role_id: roleId
+            }],
+            function (err) {
+              if (err) throw err;
+              console.table(val);
+              start();
+            }
+            )
+        });
+    });
+};
