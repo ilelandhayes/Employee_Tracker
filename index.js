@@ -141,5 +141,74 @@ const addRole = () => {
         }
     );
 }
-
-const addEmployee = () => {}
+// Role queries
+// function selectRole 
+let roleArr = [];
+const selectRole = () => {
+    database.query("SELECT * FROM role;", function(err, res) {
+        if (err) throw err
+        for (var i = 0; i < res.length; i++) {
+            roleArr.push(res[i].title);
+        }
+    })
+    return roleArr;
+};
+// manager queries
+// function selectManager
+let managersArr = [];
+const selectManager = () => {
+    database.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL;", function(err, res) {
+        if (err) throw err
+        for (var i = 0; i < res.length; i++) {
+            managersArr.push(res[i].first_name);
+        }
+    })
+    return managersArr;
+};
+// function to add an employee
+const addEmployee = () => {
+    inquirer.prompt([
+        {
+            name: "firstname",
+            type: "input",
+            message: "Enter first name:",
+        },
+        {
+            name: "lastname",
+            type: "input",
+            message: "Enter last name:",
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What is their role?",
+            choices: selectRole(),
+        },
+        {
+            name: "manager",
+            type: "list",
+            message: "What's their managers name?",
+            choices: selectManager(),
+        },
+    ])
+    .then(function (val) {
+        let roleId = selectRole().indexOf(val.role) + 1;
+        let managerId = selectManager().indexOf(val.manager) + 1;
+        database.query(
+          "INSERT INTO employee SET ?",
+          {
+            first_name: val.firstname,
+            last_name: val.lastname,
+            manager_id: managerId,
+            role_id: roleId,
+          },
+          function (err) {
+            if (err) throw err;
+            console.table(val);
+            start();
+          }
+        );
+      });
+}
+// function to update an employee
+const updateEmployee = () => {}
