@@ -1,3 +1,4 @@
+// prompt questions for index file
 const questions = [
     {
         name: "choice",
